@@ -25,7 +25,7 @@ def google_authenticate(what="email"):
             creds.refresh(Request())
         else:
            flow = InstalledAppFlow.from_client_config(get_credentials(), SCOPES)
-           creds = flow.run_local_server(port=0)
+           creds = flow.run_console(port=0)
 
         with open("./token.json", "w") as token:
             token.write(creds.to_json())
