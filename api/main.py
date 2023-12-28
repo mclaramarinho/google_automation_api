@@ -1,5 +1,5 @@
 from email_colector import email_colector
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect
 
 from events_list import events_list
 from gmail_authenticate import google_authenticate
@@ -11,7 +11,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Endpoints available: \n/gmail/getEmailUpdates \n/authenticate \n/markAsRead/<id>"})
+    return redirect("https://app.swaggerhub.com/apis-docs/MARINHOCLARAMB/google_automation/1.0.0", code=302)
+
 
 @app.route('/gmail/getEmailUpdates')
 def get_email_updates():
@@ -21,6 +22,7 @@ def get_email_updates():
     else:
         return jsonify({"message": "Error fetching email updates. Try again!"}), 400
 
+
 @app.route('/authenticate')
 def authenticate():
     result = google_authenticate()
@@ -29,6 +31,7 @@ def authenticate():
     else:
         return jsonify(False), 400
 
+
 @app.route('/gmail/markAsRead/<id>')
 def mark_as_read(id):
     result = read_email(id)
@@ -36,6 +39,7 @@ def mark_as_read(id):
         return jsonify(result), 200
     else:
         return jsonify(result), 400
+
 
 @app.route('/calendar/getEventsList/<when>')
 def get_events_list(when):
@@ -48,6 +52,7 @@ def get_events_list(when):
         return jsonify(response), 200
     else:
         return jsonify(response), 500
+
 
 @app.route('/tasks/getTaskList/<when>')
 def get_task_list(when):
