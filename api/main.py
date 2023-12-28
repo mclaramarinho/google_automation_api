@@ -37,21 +37,17 @@ def mark_as_read(id):
     else:
         return jsonify(result), 400
 
-@app.route('/calendar/getEventsList')
-def get_events_list():
-    response = events_list()
-    if type(response) != "str":
-        return jsonify(response), 200
+@app.route('/calendar/getEventsList/<when>')
+def get_events_list(when):
+    if when == "today" or when == "tomorrow":
+        response = events_list(when)
     else:
-        return jsonify({"message": "An error occurred."}), 400
+        return jsonify({"message": "Arguments available for this endpoint: /today or /tomorrow"}), 404
 
-@app.route('/calendar/eventsForTomorrow')
-def events_for_tomorrow():
-    response = events_list(when="tomorrow")
     if type(response) != "str":
         return jsonify(response), 200
     else:
-        return jsonify({"message": "An error occurred."}), 400
+        return jsonify(response), 500
 
 @app.route('/tasks/getTaskList/<when>')
 def get_task_list(when):
@@ -64,7 +60,6 @@ def get_task_list(when):
         return jsonify(response), 200
     else:
         return jsonify(response), 500
-
 
 
 # CREATE FLASK APPLICATION
