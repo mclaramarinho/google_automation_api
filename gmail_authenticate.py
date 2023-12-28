@@ -24,8 +24,12 @@ def google_authenticate(what="email"):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+           ''' with open('./creds.json', 'w') as f:
+                f.write(json.dumps(get_credentials()))'''
+
+           #flow = InstalledAppFlow.from_client_secrets_file('./creds.json', SCOPES)
            flow = InstalledAppFlow.from_client_config(get_credentials(), SCOPES)
-           creds = flow.run_console(port=0)
+           creds = flow.run_local_server(port=0, open_browser=False)
 
         with open("./token.json", "w") as token:
             token.write(creds.to_json())

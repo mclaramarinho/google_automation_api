@@ -25,6 +25,7 @@ def get_email_updates():
 
 @app.route('/authenticate')
 def authenticate():
+
     result = google_authenticate()
     if(type(result) != "str"):
         return jsonify(True), 200
