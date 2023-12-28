@@ -83,5 +83,5 @@ def email_colector():
             response_data["messages"].append({"id": current_id, "threadId": thread_id, "sender": sender, "subject": current_subject, "body": decoded_body.replace("  ", "")})
         response_data["count"] = count
         return response_data
-    except Exception:
-        return Exception.__name__
+    except Exception as e:
+        return e.__str__()
