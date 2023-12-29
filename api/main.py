@@ -28,7 +28,7 @@ def authenticate():
     if result == False:
         return jsonify({"message": "An error occurred"}), 500
     elif result == "done":
-        return jsonify({"message": "Successfully authorized!"}), 200
+        return jsonify({"message": "Successfully authorized!"}), 202
     else:
         if result == "Error":
             return jsonify({"message": "An error occurred"}), 500
