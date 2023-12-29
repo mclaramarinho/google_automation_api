@@ -50,13 +50,14 @@ def auth_callback():
         return jsonify({"message": "Error fetching the authentication token."}), 500
 
 
-# TODO: fix the authorization issue that will arise in the paths below from the changes above
 @app.route('/gmail/getEmailUpdates')
 def get_email_updates():
     token = get_token_from_cookies()
     result = email_colector(token)
     if not isinstance(result, str):
         return jsonify(result), 200
+    elif result == "This action requires authentication!":
+        return jsonify({"message": result}), 401
     else:
         return jsonify({"message": result}), 500
 
