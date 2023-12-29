@@ -57,22 +57,24 @@ def get_email_updates():
     if not isinstance(result, str):
         return jsonify(result), 200
     else:
-        return jsonify({"message": result}), 400
+        return jsonify({"message": result}), 500
 
 @app.route('/gmail/markAsRead/<id>')
 def mark_as_read(id):
     token = get_token_from_cookies()
     result = read_email(token, id)
-    if result:
+
+    if result == "Success":
         return jsonify(result), 200
+    elif result == "This action requires authentication!":
+        return jsonify({"message": result}), 401
     else:
-        return jsonify(result), 400
+        return jsonify({"message": result}), 400
 
 
 @app.route('/calendar/getEventsList/<when>')
 def get_events_list(when):
     token = get_token_from_cookies()
-
 
     if when == "today" or when == "tomorrow":
         response = events_list(token, when)
@@ -82,7 +84,10 @@ def get_events_list(when):
     if not isinstance(response, str):
         return jsonify(response), 200
     else:
-        return jsonify({"message": response}), 400
+        if response == "This action requires authentication!":
+            return jsonify({"message": response}), 401
+        else:
+            return jsonify({"message": response}), 500
 
 
 @app.route('/tasks/getTaskList/<when>')
