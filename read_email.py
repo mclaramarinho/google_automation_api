@@ -1,15 +1,19 @@
-from gmail_authenticate import google_authenticate
+from gmail_authenticate import google_authenticate, get_service
 
 
-def read_email(message_id):
-    service = google_authenticate()
+def read_email(token, message_id):
     try:
-        service.users().messages().modify(
-            userId="me",
-            id=message_id,
-            body={
-                "removeLabelIds": ["UNREAD"]
-            }).execute()
-        return True
+        service = get_service(token, "email")
+        if isinstance(service, str):
+            e = Exception(service)
+            raise e
+        else:
+            service.users().messages().modify(
+                userId="me",
+                id=message_id,
+                body={
+                    "removeLabelIds": ["UNREAD"]
+                }).execute()
+            return True
     except:
         return False
