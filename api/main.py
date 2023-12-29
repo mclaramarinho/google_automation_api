@@ -5,6 +5,7 @@ from email_colector import email_colector
 from flask import Flask, jsonify, redirect, request, make_response, session
 from dotenv import load_dotenv
 from events_list import events_list
+from get_token_from_cookies import get_token_from_cookies
 from gmail_authenticate import google_authenticate, get_token
 from read_email import read_email
 from tasks_list import tasks_list
@@ -20,11 +21,7 @@ def home():
 
 @app.route('/authenticate')
 def authenticate():
-    token = request.cookies.get("daystream_token") or "none"
-    if token != "none":
-        token = json.loads(token)
-        token["client_id"] = os.getenv("CLIENT_ID")
-        token["client_secret"] = os.getenv("CLIENT_SECRET")
+    token = get_token_from_cookies()
 
     result = google_authenticate(request.url_root, token)
 
@@ -55,15 +52,17 @@ def auth_callback():
 # TODO: fix the authorization issue that will arise in the paths below from the changes above
 @app.route('/gmail/getEmailUpdates')
 def get_email_updates():
-    result = email_colector()
-    if type(result) != "str":
+    token = get_token_from_cookies()
+    result = email_colector(token)
+    if not isinstance(result, str):
         return jsonify(result), 200
     else:
-        return jsonify({"message": "Error fetching email updates. Try again!"}), 400
+        return jsonify({"message": result}), 400
 
 @app.route('/gmail/markAsRead/<id>')
 def mark_as_read(id):
-    result = read_email(id)
+    token = get_token_from_cookies()
+    result = read_email(token, id)
     if result:
         return jsonify(result), 200
     else:
@@ -72,21 +71,25 @@ def mark_as_read(id):
 
 @app.route('/calendar/getEventsList/<when>')
 def get_events_list(when):
+    token = get_token_from_cookies()
+
+
     if when == "today" or when == "tomorrow":
-        response = events_list(when)
+        response = events_list(token, when)
     else:
         return jsonify({"message": "Arguments available for this endpoint: /today or /tomorrow"}), 404
 
-    if type(response) != "str":
+    if not isinstance(response, str):
         return jsonify(response), 200
     else:
-        return jsonify(response), 500
+        return jsonify({"message": response}), 400
 
 
 @app.route('/tasks/getTaskList/<when>')
 def get_task_list(when):
+    token = get_token_from_cookies()
     if when == "today" or when == "tomorrow":
-        response = tasks_list(when)
+        response = tasks_list(token, when)
     else:
         return jsonify({"message": "Arguments available for this endpoint: /today or /tomorrow"}), 404
 
