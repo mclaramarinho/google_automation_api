@@ -4,16 +4,17 @@ from gmail_authenticate import google_authenticate, get_service
 
 
 def tasks_list(token, when="today"):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    start_today = now.replace(hour=0, minute=0, second=0)
+    start_tomorrow = start_today + datetime.timedelta(days=1)
 
-    min_time = datetime.datetime.utcnow().isoformat() + 'Z'
-    max_time = datetime.datetime.utcnow().replace(hour=23, minute=59, second=59).isoformat() + 'Z'
+    min_time = start_today.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+    max_time = start_tomorrow.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
     if when == "tomorrow":
-        now = datetime.datetime.utcnow()
-        min_time = now + datetime.timedelta(days=1)
-        max_time = min_time.replace(hour=23, minute=59, second=59).isoformat() + 'Z'
-        min_time = min_time.replace(hour=0, minute=0, second=0).isoformat() + "Z"
-
+        end_tomorrow = start_tomorrow + datetime.timedelta(days=1)
+        min_time = start_tomorrow.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        max_time = end_tomorrow.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
     try:
         service = get_service(token, "tasks")
         if isinstance(service, str):
@@ -21,7 +22,9 @@ def tasks_list(token, when="today"):
             raise e
         else:
             response = {}
-            results = service.tasks().list(tasklist="@default", showHidden=False, showCompleted=False, dueMin=min_time, dueMax=max_time).execute()
+            task_list_id = service.tasklists().list().execute()
+            task_list_id = task_list_id["items"][0]["id"]
+            results = service.tasks().list(tasklist=task_list_id, dueMin=min_time, dueMax=max_time).execute()
             tasks = results.get("items", [])
             response['count'] = len(tasks)
             response['tasks'] = tasks
