@@ -1,8 +1,8 @@
 import datetime
-from gmail_authenticate import google_authenticate
+from gmail_authenticate import google_authenticate, get_service
 
 
-def events_list(when="today"):
+def events_list(token, when="today"):
     min_time = datetime.datetime.utcnow().isoformat() + 'Z'
     max_time = datetime.datetime.utcnow().replace(hour=23, minute=59, second=59).isoformat() + 'Z'
 
@@ -13,17 +13,21 @@ def events_list(when="today"):
         min_time = min_time.replace(hour=0, minute=0, second=0).isoformat() + "Z"
 
     try:
-        service = google_authenticate('calendar')
-        response = {}
-        result = service.events().list(
-            calendarId="primary",
-            timeMin=min_time,
-            timeMax=max_time,
-            singleEvents=True,
-            orderBy="startTime"
-        ).execute()
-        response["events"] = result.get("items", [])
-        response["count"] = len(response["events"])
-        return response
+        service = get_service(token, "calendar")
+        if isinstance(service, str):
+            e = Exception(service)
+            raise e
+        else:
+            response = {}
+            result = service.events().list(
+                calendarId="primary",
+                timeMin=min_time,
+                timeMax=max_time,
+                singleEvents=True,
+                orderBy="startTime"
+            ).execute()
+            response["events"] = result.get("items", [])
+            response["count"] = len(response["events"])
+            return response
     except Exception as e:
         return e.__str__()
