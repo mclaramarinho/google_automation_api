@@ -2,7 +2,6 @@ import json
 import os
 from dotenv import load_dotenv
 
-import pickle
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -13,7 +12,6 @@ from credentials import get_credentials
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify',
               'https://www.googleapis.com/auth/calendar.events.readonly', 'https://www.googleapis.com/auth/tasks.readonly']
 
-#from credentials import credentials
 def google_authenticate(origin_url, token, what="email"):
 
     creds = None
@@ -43,22 +41,30 @@ def google_authenticate(origin_url, token, what="email"):
             except:
                 return "Error"
 
-    ''' try:
-        if what == "calendar":
-            return build("calendar", "v3", credentials=creds)
-        elif what == "tasks":
-            return build("tasks", "v1", credentials=creds)
-        else:
-            return build("gmail", "v1", credentials=creds)
-    except Exception:
-        return Exception.__name__'''
+def get_service(token, what):
+    cred = None
+    if token != "none":
+        creds = Credentials.from_authorized_user_info(token, scopes=SCOPES)
+        if creds.refresh_token and (not creds.valid or creds.expired):
+            creds.refresh(Request())
+        try:
+            if what == "calendar":
+                return build("calendar", "v3", credentials=creds)
+            elif what == "tasks":
+                return build("tasks", "v1", credentials=creds)
+            elif what == "email":
+                return build("gmail", "v1", credentials=creds)
+        except Exception as e:
+            return e.__str__()
+    else:
+        return "This action requires authentication!"
 
 
 def get_token(code, origin_url):
-
     flow = InstalledAppFlow.from_client_config(get_credentials(), SCOPES, redirect_uri=origin_url+"authCallback")
     try:
         access_token = flow.fetch_token(code=code)
         return access_token
     except Exception as e:
+        print(e)
         return False
