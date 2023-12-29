@@ -44,6 +44,7 @@ def auth_callback():
     if req != False:
         res = make_response({"message": "Success!"})
         res.set_cookie("daystream_token", json.dumps(req))
+        res.status_code = 200
         return res
     else:
         return jsonify({"message": "Error fetching the authentication token."}), 500
