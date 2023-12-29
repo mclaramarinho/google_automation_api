@@ -67,7 +67,7 @@ def mark_as_read(id):
     result = read_email(token, id)
 
     if result == "Success":
-        return jsonify(result), 200
+        return jsonify({"message" : result}), 200
     elif result == "This action requires authentication!":
         return jsonify({"message": result}), 401
     else:
