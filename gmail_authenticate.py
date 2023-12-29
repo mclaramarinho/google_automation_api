@@ -58,7 +58,6 @@ def get_token(code, origin_url):
 
     flow = InstalledAppFlow.from_client_config(get_credentials(), SCOPES, redirect_uri=origin_url+"authCallback")
     try:
-
         access_token = flow.fetch_token(code=code)
         return access_token
     except Exception as e:
