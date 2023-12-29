@@ -14,6 +14,6 @@ def read_email(token, message_id):
                 body={
                     "removeLabelIds": ["UNREAD"]
                 }).execute()
-            return True
-    except:
-        return False
+            return "Success!"
+    except Exception as e:
+        return e.__str__()
