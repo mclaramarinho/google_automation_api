@@ -44,7 +44,7 @@ def auth_callback():
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
-        res = redirect(location="http://localhost:3000")
+        res = make_response()
         res.status_code = 302
 
         res.response = {"message": "Success!", "data": json.dumps(req)}
