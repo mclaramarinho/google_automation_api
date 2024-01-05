@@ -44,7 +44,7 @@ def auth_callback():
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
-        res = redirect("dstream.vercel.app")
+        res = redirect("https://dstream.vercel.app")
         res.status_code = 302
         res.set_cookie("daystream_token", value=json.dumps(req), samesite="Lax", domain=".vercel.app")
         return res
