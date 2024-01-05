@@ -46,8 +46,7 @@ def auth_callback():
     if req != False:
         res = make_response()
         res.status_code = 302
-        res.set_cookie("daystream_token", value=json.dumps(req), domain="daystreamofficial.vercel.app")
-
+        res.set_cookie("daystream_token", value=json.dumps(req), samesite="None", domain="")
         res.location = "https://daystreamofficial.vercel.app/"
         return res
     else:
