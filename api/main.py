@@ -44,14 +44,16 @@ def auth_callback():
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
-        res = make_response({"message": "Success!"})
+        res = redirect(location="http://localhost:3000/")
+        res.status_code = 302
         res.set_cookie("daystream_token", json.dumps(req))
-        res.status_code = 200
-        return redirect(location="http://localhost:3000/", Response=res)
+        res.response = {"message": "Success!"}
+        return res
     else:
-        res = make_response({"message": "Error fetching the authentication token."})
+        res = redirect(location="http://localhost:3000/")
         res.status_code = 500
-        return redirect(location="http://localhost:3000/", Response=res)
+        res.response = {"message": "Error fetching the authentication token."}
+        return res
 
 
 @app.route('/gmail/getEmailUpdates')
