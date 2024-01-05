@@ -44,14 +44,9 @@ def auth_callback():
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
-        res = make_response()
+        res = redirect("dstream.vercel.app")
         res.status_code = 302
-
-        url = "http://localhost:5173/"
-        # Get the domain from the request's origin
-        parsed_url = urlparse(url)
-        domain = parsed_url.netloc
-        res.set_cookie("daystream_token", value=json.dumps(req))
+        res.set_cookie("daystream_token", value=json.dumps(req), samesite="Lax", domain=".vercel.app")
         return res
     else:
         res = redirect(location="http://localhost:3000/")
