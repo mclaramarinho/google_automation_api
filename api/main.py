@@ -10,7 +10,7 @@ from gmail_authenticate import google_authenticate, get_token
 from read_email import read_email
 from tasks_list import tasks_list
 from flask_cors import CORS, cross_origin
-
+from urllib.parse import urlparse
 app = Flask(__name__)
 cors = CORS(app, origins="https://localhost:5173")
 
@@ -46,7 +46,12 @@ def auth_callback():
     if req != False:
         res = make_response()
         res.status_code = 302
-        res.set_cookie("daystream_token", value=json.dumps(req), domain="localhost")
+
+        url = "http://localhost:5173/"
+        # Get the domain from the request's origin
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc
+        res.set_cookie("daystream_token", value=json.dumps(req), domain=domain, samesite=None, httponly=False)
         return res
     else:
         res = redirect(location="http://localhost:3000/")
