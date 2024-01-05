@@ -12,7 +12,7 @@ from tasks_list import tasks_list
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-cors = CORS(app)
+cors = CORS(app, origins="https://localhost:5173")
 
 load_dotenv()
 
