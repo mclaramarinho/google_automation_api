@@ -45,11 +45,11 @@ def auth_callback():
     if req != False:
         res = make_response()
         res.status_code = 302
-        res.set_cookie("daystream_token", value=json.dumps(req), samesite=None, httponly=False, secure=False)
+        res.set_cookie("daystream_token", value=json.dumps(req), samesite=None, httponly=False, secure=False, domain="daystreamofficial.vercel.app")
         res.location = "https://daystreamofficial.vercel.app/"
         return res
     else:
-        res = redirect(location="http://localhost:3000/")
+        res = redirect(location="https://daystreamofficial.vercel.app/")
         res.status_code = 500
         res.response = {"message": "Error fetching the authentication token."}
         return res
