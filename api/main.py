@@ -39,14 +39,13 @@ def authenticate():
             return jsonify({"url": result}), 200
 
 @app.route('/authCallback')
-@cross_origin()
 def auth_callback():
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
         res = make_response()
         res.status_code = 302
-        res.set_cookie("daystream_token", value=json.dumps(req))
+        res.set_cookie("daystream_token", value=json.dumps(req), samesite=None, httponly=False)
         res.location = "https://daystreamofficial.vercel.app/"
         return res
     else:
