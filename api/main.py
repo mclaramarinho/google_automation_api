@@ -26,7 +26,6 @@ def home():
 @cross_origin()
 def authenticate():
     token = get_token_from_cookies()
-
     result = google_authenticate(request.url_root, token)
 
     if result == False:
@@ -42,15 +41,13 @@ def authenticate():
 @app.route('/authCallback')
 @cross_origin()
 def auth_callback():
-    print("authcallback")
-    state = request.args.get('state')
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
         res = make_response({"message": "Success!"})
         res.set_cookie("daystream_token", json.dumps(req))
         res.status_code = 200
-        return res
+        return res, redirect(location=request.origin)
     else:
         return jsonify({"message": "Error fetching the authentication token."}), 500
 
