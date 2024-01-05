@@ -49,7 +49,9 @@ def auth_callback():
         res.status_code = 200
         return res, redirect(location=request.origin)
     else:
-        return jsonify({"message": "Error fetching the authentication token."}), 500
+        res = make_response({"message": "Error fetching the authentication token."})
+        res.status_code = 500
+        return res, redirect(location=request.origin)
 
 
 @app.route('/gmail/getEmailUpdates')
