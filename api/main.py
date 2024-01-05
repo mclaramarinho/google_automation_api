@@ -51,7 +51,7 @@ def auth_callback():
         # Get the domain from the request's origin
         parsed_url = urlparse(url)
         domain = parsed_url.netloc
-        res.set_cookie("daystream_token", value=json.dumps(req), domain=domain, samesite=None, httponly=False)
+        res.set_cookie("daystream_token", value=json.dumps(req), domain=domain, httponly=False)
         return res
     else:
         res = redirect(location="http://localhost:3000/")
