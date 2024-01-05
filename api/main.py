@@ -47,7 +47,7 @@ def auth_callback():
         res = redirect(location="http://localhost:3000/")
         res.status_code = 302
 
-        res.set_cookie("daystream_token", json.dumps(req), httponly=False)
+        res.set_cookie("daystream_token", json.dumps(req), httponly=False, secure=False, samesite="Lax")
         res.response = {"message": "Success!"}
         return res
     else:
