@@ -9,17 +9,21 @@ from get_token_from_cookies import get_token_from_cookies
 from gmail_authenticate import google_authenticate, get_token
 from read_email import read_email
 from tasks_list import tasks_list
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
 
 load_dotenv()
 
 @app.route('/')
+@cross_origin()
 def home():
     return redirect("https://app.swaggerhub.com/apis-docs/MARINHOCLARAMB/google_automation/1.0.0", code=302)
 
 
 @app.route('/authenticate')
+@cross_origin()
 def authenticate():
     token = get_token_from_cookies()
 
@@ -36,6 +40,7 @@ def authenticate():
             return jsonify({"url": result}), 200
 
 @app.route('/authCallback')
+@cross_origin()
 def auth_callback():
     print("authcallback")
     state = request.args.get('state')
@@ -51,6 +56,7 @@ def auth_callback():
 
 
 @app.route('/gmail/getEmailUpdates')
+@cross_origin()
 def get_email_updates():
     token = get_token_from_cookies()
     result = email_colector(token)
@@ -62,6 +68,7 @@ def get_email_updates():
         return jsonify({"message": result}), 500
 
 @app.route('/gmail/markAsRead/<id>')
+@cross_origin()
 def mark_as_read(id):
     token = get_token_from_cookies()
     result = read_email(token, id)
@@ -75,6 +82,7 @@ def mark_as_read(id):
 
 
 @app.route('/calendar/getEventsList/<when>')
+@cross_origin()
 def get_events_list(when):
     token = get_token_from_cookies()
 
@@ -93,6 +101,7 @@ def get_events_list(when):
 
 
 @app.route('/tasks/getTaskList/<when>')
+@cross_origin()
 def get_task_list(when):
     token = get_token_from_cookies()
     if when == "today" or when == "tomorrow":
