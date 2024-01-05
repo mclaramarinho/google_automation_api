@@ -44,11 +44,9 @@ def auth_callback():
     code = request.args.get('code')
     req = get_token(code, request.url_root)
     if req != False:
-        res = redirect("http://localhost:5173")
+        res = make_response()
         res.status_code = 302
-        res.access_control_allow_origin = True
-        res.direct_passthrough = True
-        res.set_cookie("daystream_token", value=json.dumps(req), samesite=None, httponly=False)
+        res.set_cookie("daystream_token", value=json.dumps(req), domain="localhost")
         return res
     else:
         res = redirect(location="http://localhost:3000/")
